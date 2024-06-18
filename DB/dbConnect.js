@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+mongoose.set('strictQuery', true);
 
 async function dbConnect(url) {
     try {
@@ -11,4 +12,6 @@ async function dbConnect(url) {
     }
 };
 
-module.exports = dbConnect;
+module.exports = {
+    dbConnect
+};
