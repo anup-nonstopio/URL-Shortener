@@ -22,7 +22,7 @@ app.set('view engine', 'ejs');
 app.set('views', './views');
 
 app.use('/', staticRoute);
-app.use('/url', restrictTo(['NORMAL']), urlRoute);
+app.use('/url', restrictTo(['NORMAL', 'ADMIN']), urlRoute);
 app.use('/user', userRoute);
 
 app.get('/url/:shortId', redirect);
