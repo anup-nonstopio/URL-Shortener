@@ -62,10 +62,6 @@ async function getAnalytics(req, res) {
 }
 
 async function getAllUrls(req, res) {
-    if(!req.user) {
-        return res.redirect('/login');
-    }
-
     const allUrls = await Url.find({ user: req.user._id });
     return res.render('home', { urls: allUrls });
 }

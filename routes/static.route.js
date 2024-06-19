@@ -1,8 +1,9 @@
 import express from 'express';
 import { getAllUrls } from '../controllers/url.controller.js';
+import { restrictTo } from '../middlewares/auth.middleware.js';
 const router = express.Router();
 
-router.get('/', getAllUrls);
+router.get('/', restrictTo(["NORMAL"]), getAllUrls);
 
 router.get('/signup', (req, res) => {
     res.render('signup');
