@@ -1,17 +1,13 @@
-const mongoose = require('mongoose');
-mongoose.set('strictQuery', true);
+import mongoose from "mongoose";
 
-async function dbConnect(url) {
+async function dbConnect() {
     try {
-        await mongoose.connect(url);
-        console.log('MongoDB connected successfully');
-        return true;
+        await mongoose.connect(process.env.MONGO_URI);
+        console.log("Database connected successfully");
     }
     catch (error) {
-        console.log('Could not connect to MongoDB');
+        console.log("Error connecting to database", error);
     }
 };
 
-module.exports = {
-    dbConnect
-};
+export default dbConnect;

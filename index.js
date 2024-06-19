@@ -1,45 +1,24 @@
-const express = require("express");
-const path = require("path");
-const cookieParser = require("cookie-parser");
-const { dbConnect } = require("./DB/dbConnect");
-const { restrictToLoggedinUserOnly, checkAuth } = require("./middlewares/auth.middleware");
-const URL = require("./models/url.model");
+import express from 'express';
+import 'dotenv/config';
+import urlRoute from './routes/url.route.js';
+import staticRoute from './routes/static.route.js';
+import dbConnect from './DB/dbConnect.js';
+import { redirect } from './controllers/url.controller.js';
 
-const urlRoute = require("./routes/url.route");
-const staticRoute = require("./routes/static.route");
-const userRoute = require("./routes/user.route");
-
+dbConnect();
 const app = express();
-const PORT = 8001;
-
-dbConnect(process.env.MONGODB ?? "mongodb://127.0.0.1:27017/URL-Shortener");
-
-app.set("view engine", "ejs");
-app.set("views", path.resolve("./views"));
+const port = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
 
-app.use("/url", restrictToLoggedinUserOnly, urlRoute);
-app.use("/user", userRoute);
-app.use("/", checkAuth, staticRoute);
+app.set('view engine', 'ejs');
+app.set('views', './views');
 
-app.get("/url/:shortId", async (req, res) => {
-    const shortId = req.params.shortId;
-    const entry = await URL.findOneAndUpdate(
-    {
-      shortId,
-    },
-    {
-      $push: {
-        visitHistory: {
-          timestamp: Date.now(),
-        },
-      },
-    }
-  );
-  res.redirect(entry.redirectURL);
+app.use('/', staticRoute);
+app.use('/url', urlRoute);
+app.get('/url/:shortId', redirect);
+
+app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
 });
-
-app.listen(PORT, () => console.log(`Server Started at PORT:${PORT}`));
